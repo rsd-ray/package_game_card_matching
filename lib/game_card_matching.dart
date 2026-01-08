@@ -4,7 +4,10 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:game_card_matching/service_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'navigator_action.dart';
 
 class MyRoute extends CupertinoPageRoute {
   MyRoute({dynamic builder}) : super(builder: builder);
@@ -177,6 +180,28 @@ class _GameCardMatchingState extends State<GameCardMatching> {
       ),
       floatingActionButton: Stack(
         children: <Widget>[
+          Positioned(
+            top: 12.0,
+            left: 30,
+            child: FloatingActionButton.extended(
+              backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
+              elevation: 3.0,
+              hoverElevation: 8.0,
+              onPressed: () {
+                injection<NavigatorAction>().execute();
+              },
+              label: Text(
+                'Exit',
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  letterSpacing: 0.0,
+                  color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
+                  fontSize: _responsiveCoefficient / pow(6.5, 2),
+                ),
+              ),
+              icon: Icon(Icons.chevron_left, color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black),
+            ),
+          ),
           Positioned(
             top: 12.0,
             right: 0.0,

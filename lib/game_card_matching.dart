@@ -71,166 +71,244 @@ class _GameCardMatchingState extends State<GameCardMatching> {
     return Scaffold(
       backgroundColor: (GameCardMatching._theme == 'dark') ? const Color(0xFF212121) : const Color(0xFFBDBDBD),
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Center(
-                child: Text(
-                  'SELECT DIFFICULTY',
-                  style: TextStyle(
-                    fontSize: _responsiveCoefficient / pow(4.5, 2),
-                    color: (GameCardMatching._theme == 'dark') ? Colors.white : const Color(0xFF212121),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        injection<NavigatorAction>().execute();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          // side: BorderSide(width: 1, color: Colors.white),
+                        ),
+                        backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
+                        minimumSize: Size.fromHeight(50),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 4,
+                        children: [
+                          Icon(Icons.chevron_left, color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black),
+                          Text(
+                            'Exit',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              letterSpacing: 0.0,
+                              color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
+                              fontSize: _responsiveCoefficient / pow(6.5, 2),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _changeTheme();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          // side: BorderSide(width: 1, color: Colors.white),
+                        ),
+                        backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
+                        minimumSize: Size.fromHeight(50),
+                      ),
+                      child: Row(
+                        spacing: 4,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            (GameCardMatching._theme == 'dark') ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+                            color: _complementColor,
+                            size: _responsiveCoefficient / 25,
+                          ),
+                          Text(
+                            GameCardMatching._theme.toUpperCase(),
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              letterSpacing: 0.0,
+                              color: _complementColor,
+                              fontSize: _responsiveCoefficient / pow(6.5, 2),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'SELECT DIFFICULTY',
+                    style: TextStyle(
+                      fontSize: _responsiveCoefficient / pow(4.5, 2),
+                      color: (GameCardMatching._theme == 'dark') ? Colors.white : const Color(0xFF212121),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <ValueListenableBuilder<double>>[
-                    for (int index = 0; index < _difficulties.length; index++)
-                      ValueListenableBuilder<double>(
-                        valueListenable: _scale[index],
-                        builder: (BuildContext context, double scale, Widget? child) {
-                          return AnimatedContainer(
-                            margin: EdgeInsets.only(bottom: (scale == 1.0) ? 0.0 : 32.0),
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeOutQuart,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                InkWell(
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
-                                  onTap: () {
-                                    Navigator.of(context).pushReplacement(
-                                        MyRoute(builder: (_) => Game((index + 4), ((index == 2) ? 5 : 4), _color2[index], _difficulties[index])));
-                                  },
-                                  onHover: (bool value) {
-                                    if (value == true) {
-                                      _scale[index].value = 1.15;
-                                    } else {
-                                      _scale[index].value = 1.0;
-                                    }
-                                  },
-                                  child: AnimatedContainer(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: _responsiveCoefficient / pow(6.5, 2), horizontal: _responsiveCoefficient / pow(5.5, 2)),
-                                    duration: const Duration(milliseconds: 800),
-                                    curve: Curves.elasticOut,
-                                    transform: Matrix4.identity()..scale(scale),
-                                    transformAlignment: Alignment.bottomCenter,
-                                    decoration: BoxDecoration(
-                                      color: (scale == 1.0) ? _complementColor : _color2[index],
-                                      borderRadius: BorderRadius.all(Radius.circular((scale == 1.0) ? 36.0 : 10.0)),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                          blurRadius: 12.0,
-                                          spreadRadius: 3.0,
-                                          color: (scale == 1.0) ? _complementColor.withOpacity(0.4) : _color2[index].withOpacity(0.4),
-                                        )
-                                      ],
-                                    ),
-                                    child: child,
-                                  ),
-                                ),
-                                const SizedBox(height: 36.0),
-                                AnimatedOpacity(
-                                  opacity: (scale == 1.0) ? 0.0 : 1.0,
-                                  duration: const Duration(milliseconds: 600),
-                                  curve: Curves.easeInOut,
-                                  child: Text(
-                                    'BEST: ${_bestTime[index]}',
-                                    style: TextStyle(
-                                      color: _color2[index],
-                                      fontSize: _responsiveCoefficient / pow(6.5, 2),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <ValueListenableBuilder<double>>[
+                      for (int index = 0; index < _difficulties.length; index++)
+                        ValueListenableBuilder<double>(
+                          valueListenable: _scale[index],
+                          builder: (BuildContext context, double scale, Widget? child) {
+                            return AnimatedContainer(
+                              margin: EdgeInsets.only(bottom: (scale == 1.0) ? 0.0 : 32.0),
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeOutQuart,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  InkWell(
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    splashColor: Colors.transparent,
+                                    onTap: () {
+                                      // Navigator.of(context).pushReplacement(MyRoute(builder: (_) => Game((index + 4), ((index == 2) ? 5 : 4), _color2[index], _difficulties[index])));
+                                      Navigator.of(context).push(MyRoute(builder: (_) => Game((index + 4), ((index == 2) ? 5 : 4), _color2[index], _difficulties[index])));
+                                    },
+                                    onHover: (bool value) {
+                                      if (value == true) {
+                                        _scale[index].value = 1.15;
+                                      } else {
+                                        _scale[index].value = 1.0;
+                                      }
+                                    },
+                                    child: AnimatedContainer(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: _responsiveCoefficient / pow(6.5, 2), horizontal: _responsiveCoefficient / pow(5.5, 2)),
+                                      duration: const Duration(milliseconds: 800),
+                                      curve: Curves.elasticOut,
+                                      transform: Matrix4.identity()..scale(scale),
+                                      transformAlignment: Alignment.bottomCenter,
+                                      decoration: BoxDecoration(
+                                        color: (scale == 1.0) ? _complementColor : _color2[index],
+                                        borderRadius: BorderRadius.all(Radius.circular((scale == 1.0) ? 36.0 : 10.0)),
+                                        boxShadow: <BoxShadow>[
+                                          BoxShadow(
+                                            blurRadius: 12.0,
+                                            spreadRadius: 3.0,
+                                            color: (scale == 1.0) ? _complementColor.withOpacity(0.4) : _color2[index].withOpacity(0.4),
+                                          )
+                                        ],
+                                      ),
+                                      child: child,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        child: Center(
-                          child: Text(
-                            _difficulties[index],
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: _responsiveCoefficient / pow(5, 2),
-                              color: (GameCardMatching._theme == 'dark') ? const Color(0xFF212121) : Colors.white,
-                              shadows: const <Shadow>[
-                                Shadow(
-                                  offset: Offset(0.0, 1.0),
-                                  blurRadius: 1.5,
-                                  color: Colors.black26,
-                                ),
-                              ],
+                                  const SizedBox(height: 36.0),
+                                  AnimatedOpacity(
+                                    opacity: (scale == 1.0) ? 0.0 : 1.0,
+                                    duration: const Duration(milliseconds: 600),
+                                    curve: Curves.easeInOut,
+                                    child: Text(
+                                      'BEST: ${_bestTime[index]}',
+                                      style: TextStyle(
+                                        color: _color2[index],
+                                        fontSize: _responsiveCoefficient / pow(6.5, 2),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Center(
+                            child: Text(
+                              _difficulties[index],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: _responsiveCoefficient / pow(5, 2),
+                                color: (GameCardMatching._theme == 'dark') ? const Color(0xFF212121) : Colors.white,
+                                shadows: const <Shadow>[
+                                  Shadow(
+                                    offset: Offset(0.0, 1.0),
+                                    blurRadius: 1.5,
+                                    color: Colors.black26,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-      floatingActionButton: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 12.0,
-            left: 30,
-            child: FloatingActionButton.extended(
-              backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
-              elevation: 3.0,
-              hoverElevation: 8.0,
-              onPressed: () {
-                injection<NavigatorAction>().execute();
-              },
-              label: Text(
-                'Exit',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  letterSpacing: 0.0,
-                  color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
-                  fontSize: _responsiveCoefficient / pow(6.5, 2),
-                ),
-              ),
-              icon: Icon(Icons.chevron_left, color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black),
-            ),
-          ),
-          Positioned(
-            top: 12.0,
-            right: 0.0,
-            child: FloatingActionButton.extended(
-              backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
-              elevation: 3.0,
-              hoverElevation: 8.0,
-              onPressed: () {
-                _changeTheme();
-              },
-              label: Text(
-                GameCardMatching._theme.toUpperCase(),
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  letterSpacing: 0.0,
-                  color: _complementColor,
-                  fontSize: _responsiveCoefficient / pow(6.5, 2),
-                ),
-              ),
-              icon: Icon(
-                (GameCardMatching._theme == 'dark') ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
-                color: _complementColor,
-                size: _responsiveCoefficient / 25,
-              ),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      // floatingActionButton: Stack(
+      //   children: <Widget>[
+      //     Positioned(
+      //       top: 12.0,
+      //       left: 30,
+      //       child: FloatingActionButton.extended(
+      //         backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
+      //         elevation: 3.0,
+      //         hoverElevation: 8.0,
+      //         onPressed: () {
+      //           injection<NavigatorAction>().execute();
+      //         },
+      //         label: Text(
+      //           'Exit',
+      //           style: TextStyle(
+      //             fontFamily: 'Roboto',
+      //             letterSpacing: 0.0,
+      //             color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
+      //             fontSize: _responsiveCoefficient / pow(6.5, 2),
+      //           ),
+      //         ),
+      //         icon: Icon(Icons.chevron_left, color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black),
+      //       ),
+      //     ),
+      //     Positioned(
+      //       top: 12.0,
+      //       right: 0.0,
+      //       child: FloatingActionButton.extended(
+      //         backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
+      //         elevation: 3.0,
+      //         hoverElevation: 8.0,
+      //         onPressed: () {
+      //           _changeTheme();
+      //         },
+      //         label: Text(
+      //           GameCardMatching._theme.toUpperCase(),
+      //           style: TextStyle(
+      //             fontFamily: 'Roboto',
+      //             letterSpacing: 0.0,
+      //             color: _complementColor,
+      //             fontSize: _responsiveCoefficient / pow(6.5, 2),
+      //           ),
+      //         ),
+      //         icon: Icon(
+      //           (GameCardMatching._theme == 'dark') ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+      //           color: _complementColor,
+      //           size: _responsiveCoefficient / 25,
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }
@@ -506,7 +584,8 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
                               highlightColor: Colors.transparent,
                               splashColor: Colors.transparent,
                               onTap: () {
-                                Navigator.of(context).pushReplacement(MyRoute(builder: (_) => const GameCardMatching()));
+                                // Navigator.of(context).pushReplacement(MyRoute(builder: (_) => const GameCardMatching()));
+                                Navigator.pop(context);
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
@@ -570,7 +649,8 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
                                   highlightColor: Colors.transparent,
                                   splashColor: Colors.transparent,
                                   onTap: () {
-                                    Navigator.of(context).pushReplacement(MyRoute(builder: (_) => const GameCardMatching()));
+                                    // Navigator.of(context).pushReplacement(MyRoute(builder: (_) => const GameCardMatching()));
+                                    Navigator.pop(context);
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
@@ -756,113 +836,84 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
                             builder: (BuildContext context, StateSetter setState) {
                               return BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 16.8, sigmaY: 16.8),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Positioned(
-                                      top: 12.0,
-                                      right: 12.0,
-                                      child: FloatingActionButton.extended(
-                                        backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black : Colors.white,
-                                        elevation: 3.0,
-                                        hoverElevation: 8.0,
-                                        onPressed: () {
-                                          _changeTheme();
-                                          setState(() {});
-                                        },
-                                        label: Text(
-                                          GameCardMatching._theme.toUpperCase(),
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            letterSpacing: 0.0,
-                                            color: (GameCardMatching._theme == 'dark') ? const Color(0xFFE0E0E0) : const Color(0xFF212121),
-                                            fontSize: _responsiveCoefficient / pow(6.5, 2),
+                                child: AlertDialog(
+                                  elevation: 0.0,
+                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24.0))),
+                                  backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black26 : Colors.white24,
+                                  actionsPadding: EdgeInsets.all(_responsiveCoefficient / 40),
+                                  contentPadding: EdgeInsets.all(_responsiveCoefficient / 20),
+                                  titlePadding: EdgeInsets.all(_responsiveCoefficient / 40),
+                                  insetPadding: EdgeInsets.zero,
+                                  content: Text(
+                                    'GAME PAUSED\n',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: _responsiveCoefficient / pow(4.5, 2),
+                                      color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
+                                    ),
+                                  ),
+                                  actions: <Row>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <InkWell>[
+                                        InkWell(
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          splashColor: Colors.transparent,
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                            Timer(const Duration(milliseconds: 400), () {
+                                              _timerAnimation.forward(from: _timerAnimation.value);
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(right: _responsiveCoefficient / 60),
+                                            padding: EdgeInsets.symmetric(vertical: _responsiveCoefficient / 49),
+                                            width: _responsiveCoefficient / 4,
+                                            decoration: ShapeDecoration(
+                                              color: (GameCardMatching._theme == 'dark') ? Colors.black26 : Colors.white24,
+                                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'CONTINUE',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: _responsiveCoefficient / pow(5.5, 2),
+                                                  color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                        icon: Icon(
-                                          (GameCardMatching._theme == 'dark') ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
-                                          color: (GameCardMatching._theme == 'dark') ? const Color(0xFFE0E0E0) : const Color(0xFF212121),
-                                          size: _responsiveCoefficient / 25,
-                                        ),
-                                      ),
-                                    ),
-                                    AlertDialog(
-                                      elevation: 0.0,
-                                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24.0))),
-                                      backgroundColor: (GameCardMatching._theme == 'dark') ? Colors.black26 : Colors.white24,
-                                      actionsPadding: EdgeInsets.all(_responsiveCoefficient / 40),
-                                      contentPadding: EdgeInsets.all(_responsiveCoefficient / 20),
-                                      titlePadding: EdgeInsets.all(_responsiveCoefficient / 40),
-                                      insetPadding: EdgeInsets.zero,
-                                      content: Text(
-                                        'GAME PAUSED\n',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: _responsiveCoefficient / pow(4.5, 2),
-                                          color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
-                                        ),
-                                      ),
-                                      actions: <Row>[
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: <InkWell>[
-                                            InkWell(
-                                              hoverColor: Colors.transparent,
-                                              highlightColor: Colors.transparent,
-                                              splashColor: Colors.transparent,
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                                Timer(const Duration(milliseconds: 400), () {
-                                                  _timerAnimation.forward(from: _timerAnimation.value);
-                                                });
-                                              },
-                                              child: Container(
-                                                margin: EdgeInsets.only(right: _responsiveCoefficient / 60),
-                                                padding: EdgeInsets.symmetric(vertical: _responsiveCoefficient / 49),
-                                                width: _responsiveCoefficient / 4,
-                                                decoration: ShapeDecoration(
-                                                  color: (GameCardMatching._theme == 'dark') ? Colors.black26 : Colors.white24,
-                                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    'CONTINUE',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: _responsiveCoefficient / pow(5.5, 2),
-                                                      color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
-                                                    ),
-                                                  ),
+                                        InkWell(
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          splashColor: Colors.transparent,
+                                          onTap: () {
+                                            // Navigator.of(context).pushReplacement(MyRoute(builder: (_) => const GameCardMatching()));
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(left: _responsiveCoefficient / 60),
+                                            padding: EdgeInsets.symmetric(vertical: _responsiveCoefficient / 49),
+                                            width: _responsiveCoefficient / 4,
+                                            decoration: ShapeDecoration(
+                                              color: (GameCardMatching._theme == 'dark') ? Colors.black26 : Colors.white24,
+                                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'QUIT',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: _responsiveCoefficient / pow(5.5, 2),
+                                                  color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
                                                 ),
                                               ),
                                             ),
-                                            InkWell(
-                                              hoverColor: Colors.transparent,
-                                              highlightColor: Colors.transparent,
-                                              splashColor: Colors.transparent,
-                                              onTap: () {
-                                                Navigator.of(context).pushReplacement(MyRoute(builder: (_) => const GameCardMatching()));
-                                              },
-                                              child: Container(
-                                                margin: EdgeInsets.only(left: _responsiveCoefficient / 60),
-                                                padding: EdgeInsets.symmetric(vertical: _responsiveCoefficient / 49),
-                                                width: _responsiveCoefficient / 4,
-                                                decoration: ShapeDecoration(
-                                                  color: (GameCardMatching._theme == 'dark') ? Colors.black26 : Colors.white24,
-                                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    'QUIT',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: _responsiveCoefficient / pow(5.5, 2),
-                                                      color: (GameCardMatching._theme == 'dark') ? Colors.white : Colors.black,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ],
                                     ),

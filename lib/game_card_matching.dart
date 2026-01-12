@@ -8,6 +8,7 @@ import 'package:game_card_matching/service_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'navigator_action.dart';
+import 'set_score_action.dart';
 
 class MyRoute extends CupertinoPageRoute {
   MyRoute({dynamic builder}) : super(builder: builder);
@@ -482,7 +483,12 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
       _isMatched[_second] = true;
       if (_matchedCnt == _dimension) {
         //GAME FINISHED
-        _finishTime = (_dimension * 5 * _timerAnimation.value).toStringAsPrecision(4);
+
+        final duration = (_dimension * 5 * _timerAnimation.value).toInt();
+
+        injection<SetScoreAction>().execute(duration);
+
+        _finishTime = duration.toStringAsPrecision(4);
         _completeMessage = 'Completed in $_finishTime seconds.';
         SharedPreferences _sp = await SharedPreferences.getInstance();
         if (_sp.getString('${widget._difficulty.toLowerCase()}BestTime') == null ||
